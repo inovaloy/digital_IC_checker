@@ -1,0 +1,8 @@
+VCC = "VCC"
+GND = "GND"
+
+HIGH = 1
+LOW  = 0
+
+RETURN_SUCCESS = 0
+RETURN_ERROR   = 1
