@@ -10,6 +10,7 @@ from IC7402 import ic7402
 from IC7404 import ic7404
 from IC7408 import ic7408
 from IC7432 import ic7432
+from IC7486 import ic7486
 
 
 SUPPORTED_IC = {
@@ -18,6 +19,7 @@ SUPPORTED_IC = {
     "7404" : [ic7404, "NOT Gate IC"],
     "7408" : [ic7408, "AND Gate IC"],
     "7432" : [ic7432, "OR Gate IC"],
+    "7486" : [ic7486, "XOR Gate IC"],
     "4511" : [ic4511, "BCD to 7 Segment Decoder IC"],
     }
 
