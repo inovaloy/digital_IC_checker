@@ -1,5 +1,8 @@
 import os
 import subprocess
+import json
+import shutil
+from datetime import datetime
 
 path = 'firmware'
 
@@ -9,6 +12,49 @@ created_folder = []
 # install cmd "pip3 install adafruit-ampy"
 uploader = "ampy"
 port = "/dev/ttyACM0"
+config_bkp_file = "config_bkp.json"
+
+
+def make_ordinal(n):
+    '''
+    Convert an integer into its ordinal representation::
+
+        make_ordinal(0)   => '0th'
+        make_ordinal(3)   => '3rd'
+        make_ordinal(122) => '122nd'
+        make_ordinal(213) => '213th'
+    '''
+    n = int(n)
+    if 11 <= (n % 100) <= 13:
+        suffix = 'th'
+    else:
+        suffix = ['th', 'st', 'nd', 'rd', 'th'][min(n % 10, 4)]
+    return str(n) + suffix
+
+
+def get_current_time():
+    now = datetime.now()
+    ordinal_date = make_ordinal(now.strftime("%d"))
+    current_time = now.strftime("%I:%M:%S %p  "+ordinal_date+" %B %Y")
+    print("\nFlash Time =", current_time)
+    return current_time
+
+
+def update_flash_time_to_config():
+    shutil.copyfile(os.path.join(path, "config.json"), os.path.join(path, config_bkp_file))
+    with open(os.path.join(path, "config.json"), 'r') as file:
+        json_data = json.loads(file.read())
+
+    json_data["build_time"] = get_current_time()
+    config = open(os.path.join(path, "config.json"), 'w')
+    config.write(json.dumps(json_data, indent=4))
+    config.close()
+
+
+def restore_config_file():
+    if os.path.exists(os.path.join(path, config_bkp_file)):
+        shutil.copyfile(os.path.join(path, config_bkp_file), os.path.join(path, "config.json"))
+        os.remove(os.path.join(path, config_bkp_file))
 
 
 def run_cmd(base_arg):
@@ -88,6 +134,8 @@ def upload_firmware():
                 return exitcode
     for root, directories, files in os.walk(path, topdown=False):
         for name in files:
+            if name == config_bkp_file:
+                continue
             exitcode = create_new_file(os.path.join(root, name))
             if exitcode != EXIT_CODE_SUCCESS:
                 return exitcode
@@ -104,7 +152,9 @@ if __name__ == "__main__":
     print("Removeing old files from Hardware...")
     if clean_target() != EXIT_CODE_SUCCESS:
         exit(0)
+    update_flash_time_to_config()
     print("\nUploading new files to Hardware...")
     if upload_firmware() != EXIT_CODE_SUCCESS:
         exit(0)
+    restore_config_file()
     print("\n\nFirmware Uploaded Succesfully Please restart the hardware once.\n")
