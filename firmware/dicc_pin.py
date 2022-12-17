@@ -5,6 +5,9 @@ LED2 = 22
 LED3 = 21
 LED4 = 19
 
+DUAL_LED_RED   = 28
+DUAL_LED_GREEN = 27
+
 
 '''
 +----------------------------+

@@ -55,3 +55,25 @@ def welcome_led_blink():
 
     for led in led_list:
         led.value(LOW)
+
+
+def blink_status_led(status):
+    green_status_led = Pin(dicc_pin.DUAL_LED_GREEN, Pin.OUT)
+    red_status_led = Pin(dicc_pin.DUAL_LED_RED, Pin.OUT)
+
+    green_status_led.value(LOW)
+    red_status_led.value(LOW)
+
+    if status == RETURN_SUCCESS:
+        for _ in range(5):
+            green_status_led.value(HIGH)
+            time.sleep(0.2)
+            green_status_led.value(LOW)
+            time.sleep(0.2)
+
+    if status == RETURN_ERROR:
+        for _ in range(5):
+            red_status_led.value(HIGH)
+            time.sleep(0.2)
+            red_status_led.value(LOW)
+            time.sleep(0.2)
