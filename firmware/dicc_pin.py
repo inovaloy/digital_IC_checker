@@ -8,6 +8,8 @@ LED4 = 19
 DUAL_LED_RED   = 28
 DUAL_LED_GREEN = 27
 
+REF_VCC = 20
+
 
 '''
 +----------------------------+

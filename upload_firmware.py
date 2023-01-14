@@ -4,6 +4,7 @@ import json
 import shutil
 from datetime import datetime
 import sys
+import argparse
 
 path = 'firmware'
 
@@ -21,7 +22,7 @@ created_folder_list = []
 
 # install cmd "pip3 install adafruit-ampy"
 uploader        = "ampy"
-port            = "/dev/ttyACM0"
+port            = None
 config_bkp_file = "config_bkp.json"
 config_file     = "config.json"
 
@@ -190,6 +191,9 @@ def create_new_folder(dest_dir):
 
 def create_new_file(dest_file, config_update = NO_CONFIG_UPDATE):
     actual_file = os.path.abspath(dest_file).replace(os.path.abspath(path), "")
+
+    if os.name == "nt":
+        actual_file = actual_file.replace("\\", "/")
     exitcode , output = run_cmd([uploader, "--port", port, "put", dest_file, actual_file])
     if config_update == SECRECT_CONFIG_UPDATE:
         return exitcode
@@ -259,14 +263,19 @@ def partial_firmware_update(file_list):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Firmware Upload to Digital IC checker")
+    parser.add_argument("--port", "-p", required=True, help="Name or the Serial Port")
+    parser.add_argument("input", nargs="*", help="variable number of file or folder")
+    args = parser.parse_args()
+    port = args.port
     print("\n\t\t:Digital IC Checking:\n\tFirmware Upload will start shortly\n")
     if not os.path.exists(port):
         print("ERROR:", port, "not available")
         exit(0)
-    if len(sys.argv) > 1:
+    if len(args.input) > 0:
         print("Jump to partial fimmware upload mode")
 
-        for file in sys.argv[1:]:
+        for file in args.input:
             if not os.path.exists(file):
                 print(file, "is not exist")
                 exit(0)
@@ -275,7 +284,7 @@ if __name__ == "__main__":
                 print("Not able to upload files or folder from unknown location")
                 exit(0)
 
-        partial_firmware_update(sys.argv[1:])
+        partial_firmware_update(args.input)
     else:
         noramal_firmware_update()
 
