@@ -4,3 +4,4 @@ from IC4511.ic4511_pin import *
 
 def main():
     print("\n\nComming soon...\n\n")
+    return RETURN_NA

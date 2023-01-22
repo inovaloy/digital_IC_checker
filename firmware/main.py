@@ -14,6 +14,8 @@ from IC7408 import ic7408
 from IC7432 import ic7432
 from IC7486 import ic7486
 from IC74595 import ic74595
+from IC24LC512 import ic24lc512
+from IC24LC256 import ic24lc256
 
 SUPPORTED_IC = {
     "7400"  : [
@@ -57,7 +59,24 @@ SUPPORTED_IC = {
         IC_16_PIN,
         "Serial In to Parallel Out Shift Register IC"
         ],
-    # "4511"  : [ic4511,  "BCD to 7 Segment Decoder IC"],
+
+    "24LC512" : [
+        ic24lc512,
+        IC_8_PIN,
+        "512Kbits EEPROM IC"
+        ],
+
+    "24LC256" : [
+        ic24lc256,
+        IC_8_PIN,
+        "256Kbits EEPROM IC"
+        ],
+
+    "4511"  : [
+        ic4511,
+        IC_16_PIN,
+        "BCD to 7 Segment Decoder IC"
+        ],
     }
 
 welcome.welcome_led_static()
@@ -70,9 +89,10 @@ SUPPORTED_IC = OrderedDict(sorted(SUPPORTED_IC.items()))
 while True:
     print("\nCurrently we support: ")
     for key in SUPPORTED_IC:
-        colon = " "*(5-len(key))+":"
+        colon = " "*(8-len(key))+":"
         print(" ", key, colon, SUPPORTED_IC[key][2])
     selected_ic = input("\nSelect Any IC: ")
+    selected_ic = selected_ic.upper()
     print("\n")
     if not welcome.check_external_power():
         continue
@@ -88,12 +108,13 @@ while True:
                 if status == RETURN_SUCCESS:
                     print("\nVERDICT: IC",selected_ic,"perfetly working.")
                     print("-"*(30+len(selected_ic)))
-                else:
+                elif status != RETURN_NA:
                     print("\nVERDICT: IC",selected_ic,"looks not good, Please cross verify manually.")
                     print("-"*(57+len(selected_ic)))
                 welcome.blink_status_led(status)
             except Exception as e:
-                print("ERROR:", e)
+                thread_handeler[0] = OFF
+                print("\nERROR:", e)
         welcome.select_ic_base_led(IC_NO_PIN)
     else:
         print("Sorry!", selected_ic, " is not supported. Try Again.")

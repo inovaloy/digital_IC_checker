@@ -9,6 +9,7 @@ OFF  = 0
 
 RETURN_SUCCESS = 0
 RETURN_ERROR   = 1
+RETURN_NA      = 2
 
 IC_16_PIN      = 0
 IC_14_PIN      = 1

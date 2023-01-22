@@ -7,6 +7,7 @@ import dicc_pin
 
 led_list = []
 ver_vol_pin = None
+on_board_led = None
 
 def txt_padding(txt, center, l_offset):
     txt_len = len(str(txt))
@@ -38,17 +39,21 @@ def print_intro():
 def io_initialte():
     global led_list
     global ver_vol_pin
+    global on_board_led
 
     led_list.append(Pin(dicc_pin.LED1, Pin.OUT))
     led_list.append(Pin(dicc_pin.LED2, Pin.OUT))
     led_list.append(Pin(dicc_pin.LED3, Pin.OUT))
     led_list.append(Pin(dicc_pin.LED4, Pin.OUT))
 
+    on_board_led = Pin(dicc_pin.ON_BOARD_LED, Pin.OUT)
+
     ver_vol_pin = Pin(dicc_pin.REF_VCC, Pin.IN, Pin.PULL_UP)
 
 
 def welcome_led_static():
     global led_list
+    global on_board_led
 
     if led_list == []:
         io_initialte()
@@ -56,6 +61,8 @@ def welcome_led_static():
     for led in led_list:
         led.value(HIGH)
     time.sleep(0.1)
+
+    on_board_led.value(HIGH)
 
 
 def welcome_led_blink():
