@@ -5,6 +5,8 @@ LED2 = 22
 LED3 = 21
 LED4 = 19
 
+ON_BOARD_LED   = 25
+
 DUAL_LED_RED   = 28
 DUAL_LED_GREEN = 27
 
@@ -72,7 +74,7 @@ DICC_PIN_8_1  =  13
 DICC_PIN_8_2  =  14
 DICC_PIN_8_3  =  15
 DICC_PIN_8_4  = GND # No Use
-DICC_PIN_8_5  =   5
-DICC_PIN_8_6  =  12
+DICC_PIN_8_5  =   4
+DICC_PIN_8_6  =   5
 DICC_PIN_8_7  =  11
 DICC_PIN_8_8  = VCC # No Use
