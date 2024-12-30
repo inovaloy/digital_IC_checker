@@ -10,7 +10,9 @@ ON_BOARD_LED   = 25
 DUAL_LED_RED   = 28
 DUAL_LED_GREEN = 27
 
-REF_VCC = 20
+REF_VCC        = 20
+
+RESET_PIN      = 18
 
 
 '''

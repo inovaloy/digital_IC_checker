@@ -14,6 +14,13 @@ from IC7408.ic7408_pin import *
     -------------------
 '''
 
+def metadata():
+    ic_pin_count  = IC_14_PIN
+    ic_brief_name = "2 input AND Gate IC"
+
+    return ic_pin_count, ic_brief_name
+
+
 def test_run(index, input1, input2, output):
     errand = 0
 

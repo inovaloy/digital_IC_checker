@@ -4,6 +4,8 @@ import json
 import shutil
 from datetime import datetime
 import sys
+import time
+import serial
 import argparse
 
 path = 'firmware'
@@ -66,6 +68,14 @@ def restore_config_file():
     if os.path.exists(os.path.join(path, config_bkp_file)):
         shutil.copyfile(os.path.join(path, config_bkp_file), os.path.join(path, config_file))
         os.remove(os.path.join(path, config_bkp_file))
+
+
+def is_port_in_use(port):
+    try:
+        with serial.Serial(port) as ser:
+            return False  # Port is not in use
+    except (OSError, serial.SerialException):
+        return True  # Port is in use
 
 
 def run_cmd(base_arg):
@@ -269,9 +279,20 @@ if __name__ == "__main__":
     args = parser.parse_args()
     port = args.port
     print("\n\t\t:Digital IC Checking:\n\tFirmware Upload will start shortly\n")
+
     if not os.path.exists(port):
         print("ERROR:", port, "not available")
         exit(0)
+
+    if is_port_in_use(port):
+        print("Serial Port:", port, "is already in use. Please close it")
+        for sec in range(20, 0, -1):
+            print(f"Automatic Retry in {sec} Seconds       ", end="\r")
+            time.sleep(1)
+        if is_port_in_use(port):
+            print("Serial Port:", port, "is still in use. Exiting")
+            exit(0)
+
     if len(args.input) > 0:
         print("Jump to partial fimmware upload mode")
 
