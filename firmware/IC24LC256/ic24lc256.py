@@ -5,6 +5,13 @@ import time
 import random
 
 
+def metadata():
+    ic_pin_count  = IC_8_PIN
+    ic_brief_name = "256Kbits EEPROM IC"
+
+    return ic_pin_count, ic_brief_name
+
+
 def zfill(data, size, char="0"):
     data = str(data)
     if len(data) < size:
@@ -56,42 +63,42 @@ def main():
 
     fail_counter = 0
     i2c_add_dict = {
-                        "address_list" :
-                        [
-                            {
-                                "address_line" : [0, 0, 0],
-                                "address"      : 80
-                            },
-                            {
-                                "address_line" : [0, 0, 1],
-                                "address"      : 84
-                            },
-                            {
-                                "address_line" : [0, 1, 0],
-                                "address"      : 82
-                            },
-                            {
-                                "address_line" : [0, 1, 1],
-                                "address"      : 86
-                            },
-                            {
-                                "address_line" : [1, 0, 0],
-                                "address"      : 81
-                            },
-                            {
-                                "address_line" : [1, 0, 1],
-                                "address"      : 85
-                            },
-                            {
-                                "address_line" : [1, 1, 0],
-                                "address"      : 83
-                            },
-                            {
-                                "address_line" : [1, 1, 1],
-                                "address"      : 87
-                            }
-                        ]
-                    }
+        "address_list" :
+        [
+            {
+                "address_line" : [0, 0, 0],
+                "address"      : 80
+            },
+            {
+                "address_line" : [0, 0, 1],
+                "address"      : 84
+            },
+            {
+                "address_line" : [0, 1, 0],
+                "address"      : 82
+            },
+            {
+                "address_line" : [0, 1, 1],
+                "address"      : 86
+            },
+            {
+                "address_line" : [1, 0, 0],
+                "address"      : 81
+            },
+            {
+                "address_line" : [1, 0, 1],
+                "address"      : 85
+            },
+            {
+                "address_line" : [1, 1, 0],
+                "address"      : 83
+            },
+            {
+                "address_line" : [1, 1, 1],
+                "address"      : 87
+            }
+        ]
+    }
 
     i2c_address_0 = Pin(PIN_A0_IN_1, Pin.OUT)
     i2c_address_1 = Pin(PIN_A1_IN_2, Pin.OUT)

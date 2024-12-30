@@ -3,6 +3,13 @@ import time
 from dicc import *
 from IC74595.ic74595_pin import *
 
+def metadata():
+    ic_pin_count  = IC_14_PIN
+    ic_brief_name = "Serial In to Parallel Out Shift Register IC"
+
+    return ic_pin_count, ic_brief_name
+
+
 def test_run(data,
              sipo_data,
              sipo_latch,
