@@ -1,82 +1,83 @@
-import time
-from collections import OrderedDict
-import _thread
 import os
-
-import welcome
-import utility
+import json
 from dicc import *
+from utility import *
+from setup import *
+
+def get_execution_mode():
+    mode = None
+    try:
+        json_data = get_config_data()
+        if json_data == None:
+            print("Error: configuration file not found.")
+            exit(-1)
+
+        mode = json_data["mode"]
+    except:
+        mode = MODE_UNKNOWN
+
+        if MACHINE_RPI_PICO_W not in get_machine_name():
+            mode = MODE_CLI
+
+    return mode
 
 
-SUPPORTED_IC = dict()
+def get_wifi_credential():
+    wifi_name = None
+    wifi_pass = None
+    try:
+        json_data = get_config_data()
+        if json_data == None:
+            print("Error: configuration file not found.")
+            exit(-1)
 
-# Importing all the IC library automatically
-for path in os.listdir():
-    if utility.isFolder(path):
-        if path[:2] == "IC":
-            library_str = path.lower()
-            try:
-                exec("from " + path + " import " + library_str)
+        wifi_name = json_data.get("wifi")
+        wifi_pass = json_data.get("pass")
+    except:
+        pass
 
-                ic_key = library_str[2:].upper()
-                ic_pin_count  = None
-                ic_brief_name = None
-                library       = None
-                exec("ic_pin_count, ic_brief_name = " + library_str + ".metadata()")
-                exec("library =" + library_str)
+    return wifi_name, wifi_pass
 
-                if ic_pin_count != None and ic_brief_name != None and library != None:
-                    SUPPORTED_IC[ic_key] = [
-                        library,
-                        ic_pin_count,
-                        ic_brief_name
-                    ]
 
-            except Exception as e:
-                print(e)
+def connect_wifi():
+    wifi_name, wifi_pass = get_wifi_credential()
+    if wifi_name == None or wifi_pass == None:
+        print("Error: WiFi credentials not found.")
+        return False
 
-# Sorting the dictionary to print in a beautiful format
-SUPPORTED_IC = OrderedDict(sorted(SUPPORTED_IC.items()))
+    wifi_pass = get_decrypted_password(wifi_pass)
+    status, _ = wifi_setup(wifi_name, wifi_pass)
+    return status
 
-# Welcome banner and LED automation
-welcome.welcome_led_static()
-time.sleep(1)
-welcome.print_intro()
-welcome.welcome_led_blink()
 
-#  Main while loop
-while True:
-    print("\nCurrently we support: ")
-    for key in SUPPORTED_IC:
-        colon = " "*(8-len(key))+":"
-        print(" ", key, colon, SUPPORTED_IC[key][2])
-    selected_ic = input("\nSelect Any IC: ")
-    selected_ic = selected_ic.upper()
-    print("\n")
-    if not welcome.check_external_power():
-        continue
-    if selected_ic in SUPPORTED_IC:
-        welcome.select_ic_base_led(SUPPORTED_IC[selected_ic][1])
-        ans = input("Do you install the ic into selected slot (y/n) :")
-        if ans.upper() == "Y" or ans == "":
-            try:
-                thread_handeler = [ON]
-                flash_thread = _thread.start_new_thread(welcome.flash_code_running_led, (thread_handeler,))
-                status = SUPPORTED_IC[selected_ic][0].main()
-                thread_handeler[0] = OFF
-                if status == RETURN_SUCCESS:
-                    print("\nVERDICT: IC", selected_ic, "perfetly working.")
-                    print("-"*(30+len(selected_ic)))
-                elif status != RETURN_NA:
-                    print("\nVERDICT: IC", selected_ic, "not looks good, Please cross verify manually.")
-                    print("-"*(57+len(selected_ic)))
-                welcome.blink_status_led(status)
-            except Exception as e:
-                thread_handeler[0] = OFF
-                print("\nERROR:", e)
-        welcome.select_ic_base_led(IC_NO_PIN)
+def main_func():
+    jump_to_setup = False
+    mode = get_execution_mode()
+    if mode == MODE_UNKNOWN:
+        print("RT mode not set; Jump to setup mode.")
+        message = "Select execution mode"
+        jump_to_setup = True
+
+    if not connect_wifi() and mode == MODE_GUI:
+        print("WiFi connection failed.")
+        message = "Select wifi connection"
+        jump_to_setup = True
+
+    if jump_to_setup:
+        setup(message)
+        main_func()
+
+    if mode == MODE_CLI:
+        print("CLI mode")
+        import main_cli as main
+    elif mode == MODE_GUI:
+        print("GUI mode")
+        import main_gui as main
     else:
-        print("Sorry!", selected_ic, " is not supported. Try Again.")
-    time.sleep(0.5)
-    print("\n")
-    welcome.print_intro()
+        print("Unknown mode")
+        main_func()
+
+    main.main()
+
+
+main_func()

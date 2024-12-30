@@ -3,36 +3,29 @@ import json
 import time
 
 from dicc import *
+from utility import *
 import dicc_pin
 
 led_list = []
 ver_vol_pin = None
 on_board_led = None
 
-def txt_padding(txt, center, l_offset):
-    txt_len = len(str(txt))
-    space = 60 - txt_len - 4
-    if center:
-        l_space = space//2
-        r_space = space - l_space
-        return "##" + " "*l_space + str(txt) + " "*r_space + "##"
-    else:
-        r_space = space - l_offset
-        return "##" + " "*l_offset + str(txt) + " "*r_space + "##"
-
 
 def print_intro():
-    with open("config.json", 'r') as file:
-        json_data = json.loads(file.read())
+    json_data = get_config_data()
+    if json_data == None:
+        print("Error: configuration file not found.")
+        exit(-1)
 
     version = json_data["version"]
     flash_time = json_data["build_time"]
+    pad_size = 60
     print("\n\n\n")
-    print("#"*60)
-    print(txt_padding("Digital IC Checker v"+version, True, 0))
-    print(txt_padding("A project by team Inovaloy", True, 0))
-    print(txt_padding("Last update time: "+flash_time, True, 0))
-    print("#"*60)
+    print("#"*pad_size)
+    print(txt_padding("Digital IC Checker v"+version, pad_size, True, 0))
+    print(txt_padding("A project by team Inovaloy", pad_size, True, 0))
+    print(txt_padding("Last update time: "+flash_time, pad_size, True, 0))
+    print("#"*pad_size)
 
 
 
