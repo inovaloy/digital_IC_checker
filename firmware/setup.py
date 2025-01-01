@@ -86,7 +86,8 @@ def render_information_menu(status = ""):
     version        = config_data["version"]
     flash_time     = config_data["build_time"]
 
-    execution_mode = config_data.get("mode")
+    user_config_data = get_user_config_data()
+    execution_mode = user_config_data.get("mode")
     if execution_mode == None:
         execution_mode = "Not Set"
     elif execution_mode == MODE_CLI:
@@ -94,7 +95,7 @@ def render_information_menu(status = ""):
     elif execution_mode == MODE_GUI:
         execution_mode = "GUI"
 
-    wifi_name = config_data.get("wifi")
+    wifi_name = user_config_data.get("wifi")
     if wifi_name == None:
         wifi_name = "Not Set"
 
@@ -225,18 +226,18 @@ def setup(status = ""):
 
 ############ Menu Back Logics ##############
 def set_execution_mode(mode):
-    config_data = get_config_data()
+    config_data = get_user_config_data()
     config_data["mode"] = mode
-    update_config_data(config_data)
+    update_user_config_data(config_data)
 
 
 def update_wifi_name(wifi_name):
-    config_data = get_config_data()
+    config_data = get_user_config_data()
     config_data["wifi"] = wifi_name
-    update_config_data(config_data)
+    update_user_config_data(config_data)
 
 
 def update_wifi_password(enc_pass):
-    config_data = get_config_data()
+    config_data = get_user_config_data()
     config_data["pass"] = enc_pass
-    update_config_data(config_data)
+    update_user_config_data(config_data)

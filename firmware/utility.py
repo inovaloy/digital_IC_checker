@@ -32,6 +32,34 @@ def update_config_data(data):
         file.write(json.dumps(data))
 
 
+def init_user_config_data():
+    config_data = get_config_data()
+    if config_data != None:
+        if config_data.get("user_data") == None:
+            config_data["user_data"] = {}
+        update_config_data(config_data)
+
+
+def get_user_config_data():
+    user_config_data = None
+    config_data = get_config_data()
+    if config_data != None:
+        user_config_data = config_data.get("user_data")
+        if user_config_data == None:
+            init_user_config_data()
+            user_config_data = {}
+    
+    return user_config_data
+
+
+def update_user_config_data(data):
+    config_data = get_config_data()
+    if config_data == None:
+        config_data = {}
+    config_data["user_data"] = data
+    update_config_data(config_data)
+
+
 def get_machine_name():
     return os.uname()[-1]
 

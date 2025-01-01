@@ -177,3 +177,8 @@ def check_external_power():
         print("\n!!!!!!!!!!!!!!!!!!!!!!! ERROR !!!!!!!!!!!!!!!!!!!!!!!!!\n")
         return False
     return True
+
+
+def get_pin_state(RESET_PIN):
+    reset_pin = Pin(RESET_PIN, Pin.IN, Pin.PULL_UP)
+    return reset_pin.value()
