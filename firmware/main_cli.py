@@ -38,12 +38,6 @@ for path in os.listdir():
 # Sorting the dictionary to print in a beautiful format
 SUPPORTED_IC = OrderedDict(sorted(SUPPORTED_IC.items()))
 
-# Welcome banner and LED automation
-welcome.welcome_led_static()
-time.sleep(1)
-welcome.print_intro()
-welcome.welcome_led_blink()
-
 #  Main while loop
 while True:
     print("\nCurrently we support: ")

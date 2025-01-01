@@ -1,13 +1,16 @@
 import os
 import json
-from dicc import *
-from utility import *
-from setup import *
+import time
+import welcome
+from dicc     import *
+from dicc_pin import *
+from utility  import *
+from setup    import *
 
 def get_execution_mode():
     mode = None
     try:
-        json_data = get_config_data()
+        json_data = get_user_config_data()
         if json_data == None:
             print("Error: configuration file not found.")
             exit(-1)
@@ -26,7 +29,7 @@ def get_wifi_credential():
     wifi_name = None
     wifi_pass = None
     try:
-        json_data = get_config_data()
+        json_data = get_user_config_data()
         if json_data == None:
             print("Error: configuration file not found.")
             exit(-1)
@@ -52,6 +55,25 @@ def connect_wifi():
 
 def main_func():
     jump_to_setup = False
+
+    # Welcome banner and LED automation
+    welcome.welcome_led_static()
+    time.sleep(1)
+    welcome.print_intro()
+    welcome.welcome_led_blink()
+
+    # on boot setup menu jump
+    timeout = 0.5
+    while timeout > 0:
+        if not welcome.get_pin_state(RESET_PIN):
+            timeout -= 0.1
+            time.sleep(0.1)
+        else:
+            timeout = 0
+            jump_to_setup = True
+            message = "On-Boot Reset pin triggered"
+            setup(message)
+
     mode = get_execution_mode()
     if mode == MODE_UNKNOWN:
         print("RT mode not set; Jump to setup mode.")
